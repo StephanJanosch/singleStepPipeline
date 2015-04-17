@@ -1,0 +1,71 @@
+import ij.IJ;
+import java.lang.Runtime;
+import ij.Prefs;
+
+runtime = Runtime.getRuntime();
+
+//System.out.println("Interest Point Detection bsh - Stephan Janosch");
+
+xmlFile=System.getProperty("xml");
+sigma=System.getProperty("sigma");
+threshold=System.getProperty("threshold");
+channels=System.getProperty("channels");
+label=System.getProperty("label");
+threadCount=Integer.parseInt(System.getProperty("threadCount"));
+
+Prefs.setThreads(threadCount);
+
+channelsArray=channels.split(",");
+channelsString="";
+
+//channel specification
+for (i=0;i<channelsArray.length;i++)
+{
+	channelsString = channelsString + "channel_" +channelsArray[i].toLowerCase()+" ";
+}
+
+//interest point specification
+interestPointSpecString="";
+sigmaString="";
+thresholdString="";
+findString="";
+if (channelsArray.length==1)
+{
+	interestPointSpecString="interest_point_specification=[Advanced ...] ";
+	sigmaString="sigma="+sigma+" ";
+	thresholdString="threshold="+threshold+" ";
+	findString="find_maxima ";
+}
+else
+{
+	for (i=0;i<channelsArray.length;i++)
+	{
+`		lowerCaseChannel=channelsArray[i].toLowerCase();
+		interestPointSpecString = interestPointSpecString + "interest_point_specification_(channel_" +lowerCaseChannel+")=[Advanced ...]  ";
+		sigmaString="sigma_"+lowerCaseChannel+"="+sigma+" ";
+		thresholdString="threshold_"+lowerCaseChannel+"="+threshold+" ";
+		findString="find_maxima_"+lowerCaseChannel+" ";	}	
+}
+
+
+IJ.run("Detect Interest Points for Registration", 
+"select_xml="+xmlFile+" "+
+"process_angle=[All angles] "+
+"process_illumination=[All illuminations] "+
+"process_timepoint=[All Timepoints] "+
+"process_channel=[Multiple channels (Select from List)] "+ 
+"type_of_interest_point_detection=Difference-of-Gaussian "+
+"label_interest_points="+label+" "+
+channelsString +
+"subpixel_localization=[3-dimensional quadratic fit] "+
+interestPointSpecString+
+"downsample_images "+
+"downsample_xy=4x "+ //(1x,2x,4x,8x)
+"downsample_z=1x "+
+sigmaString+
+thresholdString+
+findString+
+"compute_on=[CPU (Java)]"
+);
+
+runtime.exit(0);

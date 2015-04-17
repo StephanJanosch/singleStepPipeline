@@ -1,0 +1,67 @@
+import ij.IJ;
+import ij.Prefs;
+import java.lang.Runtime;
+runtime = Runtime.getRuntime();
+
+xmlFile=System.getProperty("xml");
+channels=System.getProperty("channels");
+outputDir=System.getProperty("outDir");
+illuminations=System.getProperty("illuDirs");
+boundingBoxReg=System.getProperty("boundingBoxReg");
+threadCount=Integer.parseInt(System.getProperty("threadCount"));
+
+Prefs.setThreads(threadCount);
+print("Threads: "+Prefs.getThreads());
+
+channelsArray=channels.split(",");
+channelsString="";
+for (i=0;i<channelsArray.length;i++)
+{
+	channelsString = channelsString + "channel_" +channelsArray[i].toLowerCase()+" ";
+}
+
+illuminationsArray=illuminations.split(",");
+illuString="";
+for (i=0;i<illuminationsArray.length;i++)
+{
+	illuString = illuString + "illumination_" +illuminationsArray[i]+" ";
+}
+
+IJ.run("Fuse/Deconvolve Dataset", 
+"select_xml="+xmlFile+" "+
+"process_angle=[All angles] "+
+"process_channel=[Multiple channels (Select from List)] " + channelsString + //channels
+"process_illumination=[Multiple illuminations (Select from List)] " + illuString+
+"process_timepoint=[All Timepoints] "+
+"type_of_image_fusion=[Weighted-average fusion] "+
+"bounding_box=[Automatically reorientate and estimate based on sample features] "+
+"fused_image=[Save as TIFF stack] output_file_directory="+ outputDir +" "+
+"reorientation=[Automatically reorientate the sample (just temporarily, do NOT store transformation in XML)] "+
+"interest_points_channel_dapi="+ boundingBoxReg +" "+ //hardcoded to dapi channel
+//"interest_points_channel_gfp=[[DO NOT use any detections from this channel]] "+
+"use=[Corresponding detections] "+
+"downsample=1 "+ 
+"pixel_type=[16-bit unsigned integer] "+ //[32-bit floating point]
+"imglib2_container=ArrayImg "+
+"process_views_in_paralell=1 "+ //All,1,2,4 
+"additional_size=20 "+
+"blend interpolation=[Linear Interpolation]"
+);
+
+runtime.exit(0);
+//IJ.run(imp, "Fuse/Deconvolve Dataset", 
+//"select_xml=/Volumes/wormspim2-1/mvl_test/Worm4//OP43_Worm4_1.xml "+
+//"process_angle=[All angles] "+
+//"process_channel=[All channels] "+
+//"process_illumination=[All illuminations] "+
+//"process_timepoint=[All Timepoints] type_of_image_fusion=[Weighted-average fusion] bounding_box=[Automatically reorientate and estimate based on sample features] fused_image=[Display using ImageJ] reorientation=[Automatically reorientate the sample (just temporarily, do NOT store transformation in XML)] interest_points_channel_dapi=thinned-out interest_points_channel_gfp=[[DO NOT use any detections from this channel]] use=[Corresponding detections] additional_size=10 minimal_x=-808 minimal_y=1184 minimal_z=592 maximal_x=528 maximal_y=1952 maximal_z=1064 downsample=3 pixel_type=[16-bit unsigned integer] imglib2_container=ArrayImg process_views_in_paralell=1 blend interpolation=[Linear Interpolation]");
+
+
+//IJ.run(imp, "Fuse/Deconvolve Dataset", "select_xml=/Volumes/wormspim2-1/141009_Cel_OP43/Worm4//OP43_Worm4_1.xml 
+//process_angle=[Multiple angles (Select from List)] process_channel=[Multiple channels (Select from List)] process_illumination=[Single illumination (Select from List)] process_timepoint=[All Timepoints] 
+//angle_0 angle_1 channel_dapi processing_illumination=[illumination 0] type_of_image_fusion=[Weighted-average fusion] 
+//bounding_box=[Automatically reorientate and estimate based on sample features] fused_image=[Display using ImageJ] 
+// interest_points_channel_dapi=thinned-out interest_points_channel_gfp=[[DO NOT use any detections from this channel]] use=[Corresponding detections] additional_size=15 minimal_x=-872 minimal_y=1151 minimal_z=563 maximal_x=567 maximal_y=1978 maximal_z=1099 downsample=4 pixel_type=[32-bit floating point] imglib2_container=ArrayImg process_views_in_paralell=1 interpolation=[Nearest Neighbor]");
+
+
+

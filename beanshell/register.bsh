@@ -1,0 +1,25 @@
+import ij.IJ;
+import java.lang.Runtime;
+runtime = Runtime.getRuntime();
+
+xmlFile=System.getProperty("xml");
+
+IJ.run("Register Dataset based on Interest Points", 
+"select_xml="+xmlFile+" "+
+"process_angle=[All angles]  "+
+"process_illumination=[All illuminations]  "+
+"process_timepoint=[All Timepoints]  "+
+"registration_algorithm=[Fast 3d geometric hashing (rotation invariant)]  "+
+"type_of_registration=[Register timepoints individually]  "+
+"interest_points_channel_dapi=beads  "+ //paramter
+"interest_points_channel_gfp=beads  "+ //parameter
+"display fix_tiles=[Fix first tile]  "+
+"map_back_tiles=[Do not map back (use this if tiles are fixed)]  "+
+"transformation=Affine allowed_error_for_ransac=5" //possible parameter
+
+);
+
+runtime.exit(0);
+
+//for illu dir choice use below
+//IJ.run("Register Dataset based on Interest Points", "select_xml=/Volumes/wormspim2-1/141009_Cel_OP43/Worm4//OP43_Worm4_1.xml process_angle=[All angles] process_illumination=[Single illumination (Select from List)] process_timepoint=[All Timepoints] processing_illumination=[illumination 0] registration_algorithm=[Fast 3d geometric hashing (rotation invariant)] type_of_registration=[Register timepoints individually] interest_points_channel_dapi=beads interest_points_channel_gfp=beads display fix_tiles=[Fix first tile] map_back_tiles=[Do not map back (use this if tiles are fixed)] transformation=Affine allowed_error_for_ransac=5");

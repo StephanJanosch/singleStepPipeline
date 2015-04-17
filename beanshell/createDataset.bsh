@@ -1,0 +1,49 @@
+import ij.IJ;
+import ij.Prefs;
+import java.lang.Runtime;
+
+runtime = Runtime.getRuntime();
+
+dir =System.getProperty("dir");
+pattern=System.getProperty("pattern");
+angles=System.getProperty("angles");
+xmlFile=System.getProperty("xml");
+channels=System.getProperty("channels");
+threadCount=Integer.parseInt(System.getProperty("threadCount"));
+
+Prefs.setThreads(threadCount);
+
+
+illumination="";
+
+illuDirs=System.getProperty("illuDirs");
+
+if (illuDirs==null)
+{
+	illumination="_____multiple_illumination_directions=[NO (one illumination direction)] ";
+} else {
+	illumination="_____multiple_illumination_directions=[YES (one file per illumination direction)] illumination_directions_="+illuDirs+" ";
+}
+
+IJ.run("Define Multi-View Dataset", 
+	"type_of_dataset=[Image Stacks (ImageJ Opener)] " + 
+	"xml_filename="+xmlFile+" " + 
+	"multiple_timepoints=[NO (one time-point)] "+ 
+//	"multiple_channels=[NO (one channel)] "+ 
+	"multiple_channels=[YES (one file per channel)] "+ 
+	illumination+ 
+	"multiple_angles=[YES (one file per angle)] "+ 
+	"image_file_directory="+dir+" "+
+	"image_file_pattern="+pattern+" "+
+	"acquisition_angles_="+angles+" " +
+	"channels_="+channels+" " + 
+	"calibration_type=[Same voxel-size for all views] "+
+	"calibration_definition=[Load voxel-size(s) from file(s) and display for verification] "+
+	"imglib2_data_container=[ArrayImg (faster)] "
+	);
+
+//IJ.run("Define Multi-View Dataset", "type_of_dataset=[Image Stacks (ImageJ Opener)] xml_filename=dataset.xml multiple_timepoints=[NO (one time-point)] multiple_channels=[NO (one channel)] _____multiple_illumination_directions=[NO (one illumination direction)] multiple_angles=[YES (one file per angle)] image_file_directory=/projects/wormspim2/141022_TH494_Cbr_dmd-4/Worm1/Worm1_DAPI image_file_pattern=141022_TH494_Worm1_DAPI({a}).czi.zip acquisition_angles_=0-9 calibration_type=[Same voxel-size for all views] calibration_definition=[Load voxel-size(s) from file(s) and display for verification] imglib2_data_container=[ArrayImg (faster)]");
+//IJ.run("Define Multi-View Dataset", "type_of_dataset=[Image Stacks (ImageJ Opener)] xml_filename=dataset.xml multiple_timepoints=[NO (one time-point)] multiple_channels=[NO (one channel)] _____multiple_illumination_directions=[NO (one illumination direction)] multiple_angles=[YES (one file per angle)] image_file_directory=/projects/wormspim2/141022_TH494_Cbr_dmd-4/Worm1/Worm1_DAPI image_file_pattern=141022_TH494_Worm1_DAPI({a}).czi.zip acquisition_angles_=0-9 calibration_type=[Same voxel-size for all views] calibration_definition=[Load voxel-size(s) from file(s) and display for verification] imglib2_data_container=[ArrayImg (faster)]");
+//IJ.run("Define Multi-View Dataset", "type_of_dataset=[Image Stacks (ImageJ Opener)] xml_filename=dataset.xml multiple_timepoints=[NO (one time-point)] multiple_channels=[NO (one channel)] _____multiple_illumination_directions=[NO (one illumination direction)] multiple_angles=[YES (one file per angle)] image_file_directory=/Volumes/wormspim2/2014/StephM/141022_TH494_Cbr_dmd-4/Worm1/Worm1_DAPI image_file_pattern=141022_TH494_Worm1_DAPI({a}).czi.zip acquisition_angles_=0-9 calibration_type=[Same voxel-size for all views] calibration_definition=[Load voxel-size(s) from file(s) and display for verification] imglib2_data_container=[ArrayImg (faster)]");
+
+runtime.exit(0);

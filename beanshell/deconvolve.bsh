@@ -1,0 +1,63 @@
+import ij.IJ;
+import ij.Prefs;
+import java.lang.Runtime;
+runtime = Runtime.getRuntime();
+
+xmlFile=System.getProperty("xml");
+channels=System.getProperty("channels");
+outputDir=System.getProperty("outDir");
+illuminations=System.getProperty("illuDirs");
+iterations=System.getProperty("iterations");
+threadCount=Integer.parseInt(System.getProperty("threadCount"));
+psf=System.getProperty("psf");
+psfX=Integer.parseInt(System.getProperty("psfX"));
+psfY=Integer.parseInt(System.getProperty("psfY"));
+psfZ=Integer.parseInt(System.getProperty("psfZ"));
+boundingBoxReg=System.getProperty("boundingBoxReg");
+
+
+Prefs.setThreads(threadCount);
+print("Threads: "+Prefs.getThreads());
+
+channelsArray=channels.split(",");
+channelsString="";
+for (i=0;i<channelsArray.length;i++)
+{
+	channelsString = channelsString + "channel_" +channelsArray[i].toLowerCase()+" ";
+}
+
+illuminationsArray=illuminations.split(",");
+illuString="";
+for (i=0;i<illuminationsArray.length;i++)
+{
+	illuString = illuString + "illumination_" +illuminationsArray[i]+" ";
+}
+
+IJ.run("Fuse/Deconvolve Dataset", 
+"select_xml="+xmlFile+" "+
+"process_angle=[All angles] "+
+"process_channel=[Multiple channels (Select from List)] " + channelsString +
+"process_illumination=[Multiple illuminations (Select from List)] " + illuString+
+"process_timepoint=[All Timepoints] "+
+"type_of_image_fusion=[Multi-view deconvolution] "+
+"bounding_box=[Automatically reorientate and estimate based on sample features] "+
+"fused_image=[Save as TIFF stack] output_file_directory="+ outputDir +" "+
+"reorientation=[Automatically reorientate the sample (just temporarily, do NOT store transformation in XML)] "+
+"interest_points_channel_dapi="+ boundingBoxReg +" "+ //hardcoded to dapi channel
+//"interest_points_channel_gfp=[[DO NOT use any detections from this channel]] "+
+"use=[Corresponding detections] "+
+"additional_size=20 "+
+"imglib2_container=ArrayImg "+
+"type_of_iteration=[Efficient Bayesian - Optimization I (fast, precise)] "+
+"osem_acceleration=[minimal number of overlapping views] "+
+"number_of_iterations="+iterations+" "+ 
+"tikhonov_parameter=0.0060 "+
+"compute=[in 512x512x512 blocks] "+
+"compute_on=[CPU (Java)] "+
+"psf_estimation=[Extract from beads] "+
+"psf_display=[Show MIP of combined PSF's] "+
+"detections_to_extract_psf_for_channel_dapi="+psf+" "+ 
+"psf_size_x="+psfX+" psf_size_y="+psfY+" psf_size_z="+psfZ+"" 
+);
+
+runtime.exit(0);
