@@ -41,9 +41,9 @@ else
 	{
 		lowerCaseChannel=channelsArray[i].toLowerCase();
 		interestPointSpecString = interestPointSpecString + "interest_point_specification_(channel_" +lowerCaseChannel+")=[Advanced ...]  ";
-		sigmaString="sigma_"+lowerCaseChannel+"="+sigma+" ";
-		thresholdString="threshold_"+lowerCaseChannel+"="+threshold+" ";
-		findString="find_maxima_"+lowerCaseChannel+" ";
+		sigmaString=sigmaString+"sigma_"+lowerCaseChannel+"="+sigma+" ";
+		thresholdString=thresholdString+"threshold_"+lowerCaseChannel+"="+threshold+" ";
+		findString=findString+"find_maxima_"+lowerCaseChannel+" ";
 	}	
 }
 
@@ -66,7 +66,7 @@ sigmaString+
 thresholdString+
 findString+
 "compute_on=[GPU approximate (Nvidia CUDA via JNA)] "+
-"directory=/sw/users/janosch/lib "+
+"cuda_directory=/sw/users/janosch/lib "+
 "select_native_library_for_cudaseparableconvolution=libSeparableConvolutionCUDALib.so"
 );
 
