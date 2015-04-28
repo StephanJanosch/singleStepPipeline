@@ -1,0 +1,61 @@
+import ij.IJ;
+import ij.Prefs;
+import java.lang.Runtime;
+
+runtime = Runtime.getRuntime();
+
+xmlFile=System.getProperty("xml");
+channels=System.getProperty("channels");
+label=System.getProperty("label");
+newLabel=System.getProperty("newLabel");
+lowerT=Integer.parseInt(System.getProperty("lowerT"));
+upperT=Integer.parseInt(System.getProperty("upperT"));
+mode=System.getProperty("mode");
+threadCount=Integer.parseInt(System.getProperty("threadCount"));
+Prefs.setThreads(threadCount);
+
+//operation [Remove Range] or [Keep Range]
+
+if (!mode.equals("keep") && !mode.equals("remove"))
+{
+	print("please select proper mode - [keep] or [remove]");
+	print("["+mode+"]");
+	runtime.exit(0);
+}
+modeString="";
+if (mode.equals("keep")) modeString="[Keep Range]";
+if (mode.equals("remove")) modeString="[Remove Range]";
+
+channelsArray=channels.split(",");
+channelsString="";
+for (i=0;i<channelsArray.length;i++)
+{
+	channelTemplate = "channel_" +channelsArray[i].toLowerCase()+"_";
+	channelsString = channelsString + channelTemplate+"interest_points="+label +" ";
+	channelsString = channelsString + channelTemplate+"new_label="+newLabel +" ";
+	
+	channelsString = channelsString + channelTemplate+"subsample=1 ";
+	channelsString = channelsString + channelTemplate+"="+modeString +" ";
+	channelsString = channelsString + channelTemplate+"range_lower_threshold="+lowerT +" ";
+	channelsString = channelsString + channelTemplate+"range_upper_threshold="+upperT +" ";
+}
+//if (Arrays.binarySearch(channelsArray,"GFP")<0) channelsString = channelsString + "channel_gfp_interest_points=[[DO NOT thin out this channel]] ";
+//if (Arrays.binarySearch(channelsArray,"DAPI")<0) channelsString = channelsString + "channel_dapi_interest_points=[[DO NOT thin out this channel]] ";
+
+print(channelsString);
+
+IJ.run("Remove Detections by Distance", 
+"select_xml="+xmlFile+" "+
+"process_angle=[All angles] "+
+"process_illumination=[All illuminations] "+
+"process_timepoint=[All Timepoints] "+
+channelsString
+//"channel_gfp_interest_points=beads "+
+//"channel_gfp_new_label=thinned-beads "+
+//"channel_gfp_subsample=1 "+
+//"channel_gfp_=[Remove Range] "+
+//"channel_gfp_range_lower_threshold=0 "+
+//"channel_gfp_range_upper_threshold=2"
+);
+
+runtime.exit(0);
