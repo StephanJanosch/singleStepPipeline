@@ -1,0 +1,62 @@
+PROJECTSDIR="/projects/wormspim2"
+FIJICREATE="/sw/bin/xvfb-run -a /sw/users/janosch/Fiji_deconv.app/ImageJ-linux64"
+FIJI="/sw/bin/xvfb-run -a /sw/users/janosch/Fiji2015.app/ImageJ-linux64"
+ILLUDIRS="1,2"
+
+
+rule deconvole:
+	input: "dataset_thinoutRegister.xml"
+	threads: 7
+	params: queue="gpu"
+	shell:"""
+		dir=`pwd`
+		{FIJI} -Dxml=dataset_thinoutRegister.xml -Dchannels=DAPI -DoutDir=$dir -DboundingBoxReg=thinned-nuclei -DilluDirs=0 -Diterations=5 -DthreadCount=7 -Dpsf=thinned-beads -DpsfX=25 -DpsfY=25 -DpsfZ=21 -- --console /home/janosch/beanshell/deconvolveGPU.bsh > fiji_deconvolve_dapi_5.txt
+
+	"""
+
+rule thinoutRegister:
+	input: "dataset_detect.xml"
+	output: "dataset_thinoutRegister.xml"
+	threads: 1
+ 	params: queue="short"
+	shell: """
+		{FIJI} -Dxml=dataset_detect.xml  -Dchannels=DAPI,GFP -Dlabel=beads -DnewLabel=thinned-beads -Dmode=remove -DlowerT=0.0 -DupperT=1.0 -DthreadCount=1 -- --console /home/janosch/beanshell/removeByDistance.bsh > fiji_thinout_beads.txt
+		{FIJI} -Dxml=dataset_detect.xml  -Dchannels=DAPI -Dlabel=nuclei -DnewLabel=thinned-nuclei -Dmode=keep -DlowerT=0.0 -DupperT=10.0 -DthreadCount=1 -- --console /home/janosch/beanshell/removeByDistance.bsh > fiji_thinout_nuclei.txt
+		cp dataset_detect.xml dataset_thinoutRegister.xml
+		{FIJI} -Dxml=dataset_thinoutRegister.xml  -Dchannels=DAPI -DinterestPoints=thinned-beads -DilluDirs=0 -DthreadCount=1 -- --console /home/janosch/beanshell/registerGeomHashing.bsh > fiji_register_beads_dapi.txt
+		{FIJI} -Dxml=dataset_thinoutRegister.xml  -Dchannels=DAPI -DinterestPoints=thinned-nuclei -DilluDirs=0 -DthreadCount=1 -- --console /home/janosch/beanshell/registerRedundLocalDesc.bsh > fiji_register_nuclei_dapi.txt
+	"""
+
+
+rule detect:
+	input: "dataset_create.xml"	
+	output: "dataset_detect.xml"
+	threads: 7
+ 	params: queue="gpu"
+	shell:"""
+	export LD_LIBRARY_PATH=/lustre/sw/apps/cuda/6.5.14/lib64:$LD_LIBRARY_PATH
+	{FIJI} -Dxml=dataset_create.xml -Dsigma=1.8 -Dthreshold=0.002 -Dchannels=DAPI,GFP -Dlabel=beads -DthreadCount=7 -- --console /home/janosch/beanshell/detectInterestPointsGPU.bsh > fiji_detect_beads.txt
+	{FIJI} -Dxml=dataset_create.xml -Dsigma=1.8 -Dthreshold=0.02 -Dchannels=DAPI -Dlabel=nuclei -DthreadCount=7 -- --console /home/janosch/beanshell/detectInterestPointsDS4xyGPU.bsh > fiji_detect_nuclei.txt
+	cp dataset_create.xml dataset_detect.xml
+	"""
+	
+
+rule create:
+	output: "dataset_create.xml"
+	threads: 1
+ 	params: queue="short"
+	shell: """
+		dataset=`ls *DAPI*\(0*zip`
+		pattern=${{dataset/"(0).czi.zip"/"({{a}}).czi.zip"}}
+		pattern=${{pattern/"DAPI"/"{{c}}"}}
+		dir=`pwd`
+		{FIJICREATE} -Ddir=$dir -Dpattern=$pattern -Dchannels="DAPI,GFP" -Dangles=0-4 -Dxml=dataset.xml -DthreadCount=1 -- --console /home/janosch/beanshell/createDataset.bsh > fiji_create.txt
+		cp dataset.xml dataset_create.xml
+	"""
+	
+rule clean:
+	shell: """
+		rm dataset*
+		rm -rf interestpoints/
+		rm fiji_*
+		"""
