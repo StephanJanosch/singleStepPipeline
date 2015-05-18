@@ -1,0 +1,51 @@
+import ij.IJ;
+import java.lang.Runtime;
+runtime = Runtime.getRuntime();
+
+xmlFile=System.getProperty("xml");
+illuminations=System.getProperty("illuDirs");
+channels=System.getProperty("channels");
+interestPoints=System.getProperty("interestPoints");
+
+
+channelsArray=channels.split(",");
+channelsString="";
+for (i=0;i<channelsArray.length;i++)
+{
+	channelsString = channelsString + "interest_points_channel_" +channelsArray[i].toLowerCase()+"="+interestPoints+" ";
+}
+if (Arrays.binarySearch(channelsArray,"GFP")<0) channelsString = channelsString + "interest_points_channel_gfp=[(DO NOT register this channel)] ";
+if (Arrays.binarySearch(channelsArray,"DAPI")<0) channelsString = channelsString + "interest_points_channel_dapi=[(DO NOT register this channel)] ";
+
+illuminationsArray=illuminations.split(",");
+illuString="";
+for (i=0;i<illuminationsArray.length;i++)
+{
+	illuString = illuString + "illumination_" +illuminationsArray[i]+" ";
+}
+
+
+print(channelsString);
+
+IJ.run("Register Dataset based on Interest Points", 
+"select_xml="+xmlFile+" "+
+"process_angle=[All angles] "+
+"process_illumination=[Multiple illuminations (Select from List)] "+
+"process_timepoint=[All Timepoints] "+
+illuString+
+"registration_algorithm=[Fast 3d geometric hashing (rotation invariant)] "+
+"type_of_registration=[Register timepoints individually] "+
+channelsString+
+//"interest_points_channel_dapi=thinned-beads "+//paramter
+//"interest_points_channel_gfp=[(DO NOT register this channel)] "+//paramter
+"fix_tiles=[Fix first tile] "+
+"map_back_tiles=[Do not map back (use this if tiles are fixed)] "+
+"transformation=Affine "+
+"allowed_error_for_ransac=5 "+//paramter
+"significance=10"
+);
+
+runtime.exit(0);
+
+//for illu dir choice use below
+//IJ.run("Register Dataset based on Interest Points", "select_xml=/Volumes/wormspim2-1/141009_Cel_OP43/Worm4//OP43_Worm4_1.xml process_angle=[All angles] process_illumination=[Single illumination (Select from List)] process_timepoint=[All Timepoints] processing_illumination=[illumination 0] registration_algorithm=[Fast 3d geometric hashing (rotation invariant)] type_of_registration=[Register timepoints individually] interest_points_channel_dapi=beads interest_points_channel_gfp=beads display fix_tiles=[Fix first tile] map_back_tiles=[Do not map back (use this if tiles are fixed)] transformation=Affine allowed_error_for_ransac=5");

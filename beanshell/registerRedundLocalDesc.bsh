@@ -1,0 +1,48 @@
+import ij.IJ;
+import java.lang.Runtime;
+runtime = Runtime.getRuntime();
+
+xmlFile=System.getProperty("xml");
+illuminations=System.getProperty("illuDirs");
+channels=System.getProperty("channels");
+interestPoints=System.getProperty("interestPoints");
+
+
+channelsArray=channels.split(",");
+channelsString="";
+for (i=0;i<channelsArray.length;i++)
+{
+	channelsString = channelsString + "interest_points_channel_" +channelsArray[i].toLowerCase()+"="+interestPoints+" ";
+}
+if (Arrays.binarySearch(channelsArray,"GFP")<0) channelsString = channelsString + "interest_points_channel_gfp=[(DO NOT register this channel)] ";
+if (Arrays.binarySearch(channelsArray,"DAPI")<0) channelsString = channelsString + "interest_points_channel_dapi=[(DO NOT register this channel)] ";
+
+illuminationsArray=illuminations.split(",");
+illuString="";
+for (i=0;i<illuminationsArray.length;i++)
+{
+	illuString = illuString + "illumination_" +illuminationsArray[i]+" ";
+}
+
+
+print(channelsString);
+IJ.run("Register Dataset based on Interest Points", 
+"select_xml="+xmlFile+" "+
+"process_angle=[All angles] "+
+"process_illumination=[Multiple illuminations (Select from List)] "+
+"process_timepoint=[All Timepoints] "+
+illuString+
+"registration_algorithm=[Redundant geometric local descriptor matching (translation invariant)]"+
+"type_of_registration=[Register timepoints individually] "+
+channelsString+
+"interest_points_channel_gfp=[(DO NOT register this channel)] "+
+"fix_tiles=[Fix first tile] "+
+"map_back_tiles=[Do not map back (use this if tiles are fixed)] "+
+"transformation=Affine "+
+"number_of_neighbors=3 "+
+"redundancy=1 "+
+"significance=3 "+
+"allowed_error_for_ransac=5"
+);
+
+runtime.exit(0);

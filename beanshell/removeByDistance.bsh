@@ -8,8 +8,8 @@ xmlFile=System.getProperty("xml");
 channels=System.getProperty("channels");
 label=System.getProperty("label");
 newLabel=System.getProperty("newLabel");
-lowerT=Integer.parseInt(System.getProperty("lowerT"));
-upperT=Integer.parseInt(System.getProperty("upperT"));
+lowerT=Double.parseDouble(System.getProperty("lowerT"));
+upperT=Double.parseDouble(System.getProperty("upperT"));
 mode=System.getProperty("mode");
 threadCount=Integer.parseInt(System.getProperty("threadCount"));
 Prefs.setThreads(threadCount);
@@ -39,8 +39,8 @@ for (i=0;i<channelsArray.length;i++)
 	channelsString = channelsString + channelTemplate+"range_lower_threshold="+lowerT +" ";
 	channelsString = channelsString + channelTemplate+"range_upper_threshold="+upperT +" ";
 }
-//if (Arrays.binarySearch(channelsArray,"GFP")<0) channelsString = channelsString + "channel_gfp_interest_points=[[DO NOT thin out this channel]] ";
-//if (Arrays.binarySearch(channelsArray,"DAPI")<0) channelsString = channelsString + "channel_dapi_interest_points=[[DO NOT thin out this channel]] ";
+if (Arrays.binarySearch(channelsArray,"GFP")<0) channelsString = channelsString + "channel_gfp_interest_points=[(DO NOT thin out this channel)] ";
+if (Arrays.binarySearch(channelsArray,"DAPI")<0) channelsString = channelsString + "channel_dapi_interest_points=[(DO NOT thin out this channel)] ";
 
 print(channelsString);
 
