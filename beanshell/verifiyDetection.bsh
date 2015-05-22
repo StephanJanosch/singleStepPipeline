@@ -1,0 +1,15 @@
+import ij.IJ;
+import ij.Prefs;
+import java.lang.Runtime;
+import spim.fiji.plugin.Detection_Verfication;
+
+runtime = Runtime.getRuntime();
+
+String xmlFile=System.getProperty("xml");
+
+boolean isVerified = spim.fiji.plugin.Detection_Verfication.isDetectionReasonable(xmlFile);
+
+if (isVerified)
+	runtime.exit(0);
+else
+	runtime.exit(1);
