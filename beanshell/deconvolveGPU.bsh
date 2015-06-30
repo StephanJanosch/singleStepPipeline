@@ -33,7 +33,7 @@ for (i=0;i<illuminationsArray.length;i++)
 	illuString = illuString + "illumination_" +illuminationsArray[i]+" ";
 }
 
-IJ.run("Fuse/Deconvolve Dataset", 
+IJ.run("Fuse/Deconvolve Dataset",
 "select_xml="+xmlFile+" "+
 "process_angle=[All angles] "+
 "process_channel=[Multiple channels (Select from List)] " + channelsString +
@@ -50,17 +50,19 @@ IJ.run("Fuse/Deconvolve Dataset",
 "imglib2_container=ArrayImg "+
 "type_of_iteration=[Efficient Bayesian - Optimization I (fast, precise)] "+
 "osem_acceleration=[minimal number of overlapping views] "+
-"number_of_iterations="+iterations+" "+ 
+"number_of_iterations="+iterations+" "+
 "tikhonov_parameter=0.0060 "+
 "compute=[in 512x512x512 blocks] "+//[in 256x256x256 blocks]
+// "compute=[specify maximal blocksize manually]  "+
+// "blocksize_x=1024 blocksize_y=512 blocksize_z=512  "+
 "compute_on=[GPU (Nvidia CUDA via JNA)] "+
 "cuda_directory=/sw/users/janosch/lib "+
 "select_native_library_for_cudafourierconvolution=libFourierConvolutionCUDALib.so "+
 "gpu_1 "+
 "psf_estimation=[Extract from beads] "+
 "psf_display=[Show MIP of combined PSF's] "+
-"detections_to_extract_psf_for_channel_dapi="+psf+" "+ 
-"psf_size_x="+psfX+" psf_size_y="+psfY+" psf_size_z="+psfZ+"" 
+"detections_to_extract_psf_for_channel_dapi="+psf+" "+
+"psf_size_x="+psfX+" psf_size_y="+psfY+" psf_size_z="+psfZ+""
 );
 
 //IJ.run("Fuse/Deconvolve Dataset", "browse=/home/janosch/Documents/worm7/worm7.xml select_xml=/home/janosch/Documents/worm7//worm7.xml process_angle=[All angles] process_channel=[Multiple channels (Select from List)] process_illumination=[All illuminations] process_timepoint=[All Timepoints] channel_2 type_of_image_fusion=[Multi-view deconvolution] bounding_box=[Automatically reorientate and estimate based on sample features] fused_image=[Display using ImageJ] reorientation=[Automatically reorientate the sample (just temporarily, do NOT store transformation in XML)] interest_points_channel_1=[[DO NOT use any detections from this channel]] interest_points_channel_2=nuclei use=[Corresponding detections] additional_size=15 minimal_x=6 minimal_y=1156 minimal_z=723 maximal_x=1582 maximal_y=1532 maximal_z=1319 imglib2_container=ArrayImg type_of_iteration=[Efficient Bayesian - Optimization I (fast, precise)] osem_acceleration=[minimal number of overlapping views] number_of_iterations=5 use_tikhonov_regularization tikhonov_parameter=0.0060 compute=[in 256x256x256 blocks] compute_on=[GPU (Nvidia CUDA via JNA)] psf_estimation=[Extract from beads] psf_display=[Show MIP of combined PSF's] directory=/home/janosch/Tools/Fiji.app/lib select_native_library_for_cudafourierconvolution=libFourierConvolutionCUDALib.so gpu_1 gpu_2 detections_to_extract_psf_for_channel_2=beads psf_size_x=25 psf_size_y=25 psf_size_z=21");
